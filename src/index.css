@@ -1,0 +1,68 @@
+:root {
+  --first-color: hsla(0, 0%, 0%, 0.801);
+  --second-color: hsl(237, 100%, 70%);
+  --third-color: hsla(0, 0%, 100%, 0.466);
+}
+
+@font-face {
+  font-family: "Roboto";
+  font-weight: 700;
+  src: url(assets/fonts/Roboto-Medium.ttf);  
+}
+
+* {
+  font-family: "Roboto";
+  font-weight: 700;
+  color: white;
+}
+
+/* body */
+body {
+  align-items: center;
+  background-color: var(--first-color);
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  margin: 0px;
+  min-height: 100vh;
+  min-width: 320px;
+  padding: 0px;
+  place-items: center;
+  width: 100vw;
+}
+
+/* button */
+button {
+  background-color: #1c1c20;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 500;
+  padding: 0.6em 1.2em;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: var(--second-color);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* inputt */
+input {
+  outline: none;
+  background-color: var(--third-color);
+  border-width: 0px;
+  border-radius: 5px;
+  padding: 5px 5px;
+}
+
+input:focus {
+  border-width: 2px;
+  border-color: var(--second-color);
+}
