@@ -1,6 +1,8 @@
+import { FaTrash } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 import "./Table.css";
 
-const Table = ({ products }) => {
+const Table = ({products, handleDelete}) => {
   return (
     <div className="table-container">
       <table className="table custom-table">
@@ -20,16 +22,12 @@ const Table = ({ products }) => {
               <td>{product.code}</td>
               <td>{product.name}</td>
               <td>${product.price}</td>
-              <td>{product.type}</td>
+              <td>{product.type == "physical" ? "Físico" : "Digital"}</td>
               <td>
-              {(product.shippingCost > 0) ? (
-                  <>{product.shippingCost}</>
-                ) : (
-                  "N/A"
-                )}
+                {product.shippingCost > 0 ? <>{product.shippingCost}</> : "N/A"}
               </td>
               <td>
-                {product.downloadLink ? (   
+                {product.downloadLink ? (
                   <a href={product.downloadLink} className="more">
                     {product.downloadLink}
                   </a>
@@ -37,6 +35,8 @@ const Table = ({ products }) => {
                   "N/A"
                 )}
               </td>
+              <td><FaEdit/></td>
+              <td onClick={() => handleDelete(product.code)}><FaTrash/></td>
             </tr>
           ))}
         </tbody>
