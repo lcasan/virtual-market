@@ -1,0 +1,17 @@
+.logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 40px;
+    position: relative;
+}
+
+.logo img{
+    border-radius: 50%;
+    border:solid;
+    border-width: 1px;
+    padding: 20px;
+    min-width: 70px;
+    min-height: 70px;
+}
