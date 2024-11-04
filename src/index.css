@@ -16,6 +16,15 @@
   color: white;
 }
 
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
 /* body */
 body {
   align-items: center;
@@ -25,7 +34,6 @@ body {
   justify-content: center;
   margin: 0px;
   min-height: 100vh;
-  min-width: 320px;
   padding: 0px;
   place-items: center;
   width: 100vw;
