@@ -13,12 +13,25 @@ function App() {
     .then((product) => setProducts(product.data));
   }, []);
 
+  const handleDelete = (code) => {
+    // Delete product in database
+    fetch(`http://localhost:8080/delete?code=${code}`, {
+      method: 'DELETE',
+    })
+    .then((response) => {
+      if(response.ok) {
+        // Deleted product from the list of products
+        setProducts((prevProducts) => prevProducts.filter(product => product.code !== code));
+      }
+    });
+  };
+
   return (
     <>
       <Logo/>
-      <Table products={products}/>
+      <Table products={products} handleDelete={handleDelete}/>
     </>
   );
-}
+};
 
 export default App;
