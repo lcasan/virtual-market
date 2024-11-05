@@ -6,7 +6,7 @@ import "./App.css";
 
 function App() {
   const [data, setData] = useState([]);
-
+  
   useEffect(() => {
     fetch("http://localhost:8080/products")
     .then((response) => response.json())
@@ -14,9 +14,11 @@ function App() {
   }, []);
 
   return (
-    <DataContext.Provider value={data}>
-      <Logo/>
-      <Table/>
+    <DataContext.Provider value={{data, setData}}>
+      <main>
+        <Logo/>
+        <Table/>
+      </main>  
     </DataContext.Provider>
   );
 };
