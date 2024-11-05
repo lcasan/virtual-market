@@ -1,8 +1,11 @@
-import { FaTrash } from "react-icons/fa";
-import { FaEdit } from "react-icons/fa";
+import { DataContext } from "../context/DataContext";
+import { useContext, useState } from "react";
 import "./Table.css";
+import { Product } from "./Product";
 
-const Table = ({products, handleDelete}) => {
+const Table = () => {
+  const data = useContext(DataContext);
+
   return (
     <div className="table-container">
       <table className="table custom-table">
@@ -17,27 +20,8 @@ const Table = ({products, handleDelete}) => {
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => (
-            <tr key={product.code} scope="row">
-              <td>{product.code}</td>
-              <td>{product.name}</td>
-              <td>${product.price}</td>
-              <td>{product.type == "physical" ? "Físico" : "Digital"}</td>
-              <td>
-                {product.shippingCost > 0 ? <>{product.shippingCost}</> : "N/A"}
-              </td>
-              <td>
-                {product.downloadLink ? (
-                  <a href={product.downloadLink} className="more">
-                    {product.downloadLink}
-                  </a>
-                ) : (
-                  "N/A"
-                )}
-              </td>
-              <td><FaEdit/></td>
-              <td onClick={() => handleDelete(product.code)}><FaTrash/></td>
-            </tr>
+          {data.map((product) => (
+            <Product product={product} />
           ))}
         </tbody>
       </table>
