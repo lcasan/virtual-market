@@ -1,16 +1,16 @@
 import { useContext } from "react";
 import { EditingContext } from "../context/EditingContex";
 
-const ProductField = ({id, name, onChange}) => {
+const ProductField = ({id, content, onChange}) => {
   const editing = useContext(EditingContext);
-  const content = typeof name == 'object' ? name.props.children : name;
+  const newContent = typeof content == 'object' ? content.props.children : content;
   
   return (
     <td>
       {!editing ? (
-        <>{name}</>
+        <>{content}</>
       ) : (
-        <input id={id} placeholder={content} onChange={onChange} />
+        <input id={id} placeholder={newContent} onChange={onChange} />
       )}
     </td>
   );
