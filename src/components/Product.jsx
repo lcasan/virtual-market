@@ -2,10 +2,12 @@ import { ProductField } from "./ProductField";
 import { FaTrash } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import { FaSave } from "react-icons/fa";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import { EditingContext } from "../context/EditingContex";
+import { DataContext } from "../context/DataContext";
 
 const Product = ({ product }) => {
+  const { data, setData } = useContext(DataContext);
   const [editing, setEditing] = useState(false);
   const updatedProduct = useRef({ ...product });
 
@@ -31,7 +33,7 @@ const Product = ({ product }) => {
           console.log("Product successfully deleted");
 
           // Deleted product from the list of products
-          // setDataProduct((prevProducts) => prevProducts.filter(product => product.code !== code));
+          setData((prev) => prev.filter((item) => item.code !== product.code));
         }
       })
       .catch((error) => console.error("Error in the request:", error));
@@ -50,6 +52,11 @@ const Product = ({ product }) => {
       .then((response) => {
         if (response.ok) {
           console.log("Product successfully updated");
+          setData((prev) => 
+            prev.map((product) => 
+                product.code == updatedProduct.current.code ? updatedProduct.current : product
+            )
+          );
         } else {
           console.error("Error updating the product");
         }
@@ -63,28 +70,32 @@ const Product = ({ product }) => {
     <EditingContext.Provider value={editing}>
       <tr key={product.code} scope="row">
         <td>{product.code}</td>
-        <ProductField id="name" name={product.name} onChange={handleChange} />
-        <ProductField id="price" name={product.price} onChange={handleChange} />
-        <ProductField id="type" name={product.type} onChange={handleChange} />
-        <ProductField
-          id="shippingCost"
-          name={product.shippingCost ? product.shippingCost : "N/A"}
-          onChange={handleChange}
-        />
-        <ProductField
-          id="downloadLink"
-          code={product.code}
-          name={
-            product.downloadLink ? (
+        {Object.keys(product).map((key) => {
+          let content = product[key];
+          if (key == "shippingCost") {
+            content = product.shippingCost ? product.shippingCost : "N/A";
+          }
+
+          if (key == "downloadLink") {
+            content = product.downloadLink ? (
               <a href={product.downloadLink} className="more">
                 {product.downloadLink}
               </a>
             ) : (
               "N/A"
-            )
+            );
           }
-          onChange={handleChange}
-        />
+
+          return (
+            key != "code" && (
+              <ProductField
+                id={key}
+                content={content}
+                onChange={handleChange}
+              />
+            )
+          );
+        })}
 
         <td onClick={handleUpdate}>
           {" "}
@@ -92,7 +103,7 @@ const Product = ({ product }) => {
         </td>
         {editing ? (
           <td onClick={handleSave}>
-            <FaSave/>
+            <FaSave />
           </td>
         ) : (
           <td>
