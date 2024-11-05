@@ -1,36 +1,23 @@
+import { DataContext } from "./context/DataContext";
+import { useState, useEffect } from "react";
 import { Logo } from "./components/Logo";
 import { Table } from "./components/Table";
 import "./App.css";
-import { useState } from "react";
-import { useEffect } from "react";
 
 function App() {
-  const [products, setProducts] = useState([]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:8080/products")
     .then((response) => response.json())
-    .then((product) => setProducts(product.data));
+    .then((product) => setData(product.data));
   }, []);
 
-  const handleDelete = (code) => {
-    // Delete product in database
-    fetch(`http://localhost:8080/delete?code=${code}`, {
-      method: 'DELETE',
-    })
-    .then((response) => {
-      if(response.ok) {
-        // Deleted product from the list of products
-        setProducts((prevProducts) => prevProducts.filter(product => product.code !== code));
-      }
-    });
-  };
-
   return (
-    <>
+    <DataContext.Provider value={data}>
       <Logo/>
-      <Table products={products} handleDelete={handleDelete}/>
-    </>
+      <Table/>
+    </DataContext.Provider>
   );
 };
 

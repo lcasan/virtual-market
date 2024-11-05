@@ -63,14 +63,15 @@ button:focus-visible {
 
 /* inputt */
 input {
+  width: min-content;
+  text-align: center;
   outline: none;
   background-color: var(--third-color);
-  border-width: 0px;
   border-radius: 5px;
-  padding: 5px 5px;
+  padding: 3px 3px;
+  border-width: 1px;
 }
 
 input:focus {
-  border-width: 2px;
   border-color: var(--second-color);
 }
