@@ -1,7 +1,7 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { FaSave } from "react-icons/fa";
 import { EditingContext } from "../context/EditingContex";
-import { ProductField } from "./ProductField";
+import ProductField from "./ProductField";
 import { DataContext } from "../context/DataContext";
 
 import "./ProductForm.css";

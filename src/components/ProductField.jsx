@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { EditingContext } from "../context/EditingContex";
 
 const ProductField = ({id, content, active = true, onChange}) => {
@@ -17,4 +17,4 @@ const ProductField = ({id, content, active = true, onChange}) => {
   );
 };
 
-export { ProductField };
+export default React.memo(ProductField);

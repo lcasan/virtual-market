@@ -1,5 +1,6 @@
-import { Product } from "./Product";
+import Product from "./Product";
 
+import React from "react";
 const ProductList = ({products}) => {
     return (
         products.map((product) => (
@@ -8,4 +9,4 @@ const ProductList = ({products}) => {
     )
 };
 
-export {ProductList};
+export default React.memo(ProductList);

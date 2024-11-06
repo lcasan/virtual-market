@@ -1,8 +1,8 @@
 import { DataContext } from "../context/DataContext";
-import { ProductList } from "./ProductList";
+import  ProductList  from "./ProductList";
 import { NotProduct } from "./NotProduct";
 import { ProductForm } from "./ProductForm";
-import { useContext, useState } from "react";
+import React, { useContext, useState , useCallback} from "react";
 import "./Table.css";
 
 const Table = () => {
@@ -11,9 +11,9 @@ const Table = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   // Filter:
-  const handleSearch = (evt) => {
+  const handleSearch = useCallback((evt) => {
     setSearch(evt.target.value.toLowerCase());
-  };
+  }, []);
 
   const searchResult = data.filter((product) => {
     return product.name.toLowerCase().includes(search); // Search by name
@@ -56,4 +56,4 @@ const Table = () => {
   );
 };
 
-export { Table };
+export default React.memo(Table);

@@ -1,8 +1,8 @@
-import { ProductField } from "./ProductField";
+import ProductField from "./ProductField";
 import { FaTrash } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import { FaSave } from "react-icons/fa";
-import { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useCallback } from "react";
 import { EditingContext } from "../context/EditingContex";
 import { DataContext } from "../context/DataContext";
 
@@ -25,7 +25,7 @@ const Product = ({ product }) => {
   };
 
   // Delete product
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     // Delete product in database
     fetch(`http://localhost:8080/delete?code=${product.code}`, {
       method: "DELETE",
@@ -46,10 +46,10 @@ const Product = ({ product }) => {
         }
       })
       .catch((error) => console.error("Error in the request:", error));
-  };
+  }, [product.code]);
 
   // Save product
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     // Convert to JSON
     const jsonBody = JSON.stringify(updatedProduct.current);
 
@@ -79,7 +79,7 @@ const Product = ({ product }) => {
       .catch((error) => console.error("Error in the request:", error));
 
     setEditing(false);
-  };
+  }, [product.code, updatedProduct.current]);
 
   return (
     <EditingContext.Provider value={editing}>
@@ -146,4 +146,4 @@ const Product = ({ product }) => {
   );
 };
 
-export { Product };
+export default React.memo(Product);
