@@ -69,10 +69,28 @@ input {
   outline: none;
   background-color: var(--third-color);
   border-radius: 5px;
-  padding: 3px 3px;
+  padding: 4px 3px;
   border-width: 1px;
 }
 
 input:focus {
+  border-color: var(--second-color);
+}
+
+/* Select */
+select {
+  text-align: center;
+  outline: none;
+  background-color: var(--third-color);
+  border-radius: 5px;
+  padding: 4px 10px;
+  border-width: 1px;
+}
+select option {
+  background-color: gray;
+  color: black;
+}
+
+select:focus {
   border-color: var(--second-color);
 }

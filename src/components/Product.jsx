@@ -7,7 +7,7 @@ import { EditingContext } from "../context/EditingContex";
 import { DataContext } from "../context/DataContext";
 
 const Product = ({ product }) => {
-  const { data, setData } = useContext(DataContext);
+  const { _ , setData } = useContext(DataContext);
   const [editing, setEditing] = useState(false);
   const updatedProduct = useRef({ ...product });
 
@@ -19,10 +19,12 @@ const Product = ({ product }) => {
     };
   };
 
+  // Update product
   const handleUpdate = () => {
     setEditing(true);
   };
 
+  // Delete product
   const handleDelete = () => {
     // Delete product in database
     fetch(`http://localhost:8080/delete?code=${product.code}`, {
@@ -39,6 +41,7 @@ const Product = ({ product }) => {
       .catch((error) => console.error("Error in the request:", error));
   };
 
+  // Save product
   const handleSave = () => {
     // Convert to JSON
     const jsonBody = JSON.stringify(updatedProduct.current);
@@ -69,37 +72,37 @@ const Product = ({ product }) => {
   return (
     <EditingContext.Provider value={editing}>
       <tr key={product.code} scope="row">
+        {/* Product fields */}
         <td>{product.code}</td>
-        {Object.keys(product).map((key) => {
+        {
+          Object.keys(product).map((key) => {
           let content = product[key];
-          if (key == "shippingCost") {
-            content = product.shippingCost ? product.shippingCost : "N/A";
-          }
+          if (key == "shippingCost") {content = product.shippingCost ? product.shippingCost : "N/A";}
 
           if (key == "downloadLink") {
             content = product.downloadLink ? (
               <a href={product.downloadLink} className="more">
                 {product.downloadLink}
               </a>
-            ) : (
-              "N/A"
-            );
+            ) : "N/A";
           }
 
           return (
             key != "code" && (
               <ProductField
+                key={`${product.code}-${key}`}
                 id={key}
                 content={content}
                 onChange={handleChange}
               />
             )
           );
-        })}
+          })
+        }
 
+        {/* Edit, save and delete operations */}
         <td onClick={handleUpdate}>
-          {" "}
-          <FaEdit />{" "}
+          <FaEdit />
         </td>
         {editing ? (
           <td onClick={handleSave}>

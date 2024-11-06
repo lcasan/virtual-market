@@ -6,7 +6,7 @@ import { useContext, useState } from "react";
 import "./Table.css";
 
 const Table = () => {
-  const { data, setData } = useContext(DataContext);
+  const { data } = useContext(DataContext);
   const [search, setSearch] = useState(""); // Search term
   const [showCreateForm, setShowCreateForm] = useState(false);
 
