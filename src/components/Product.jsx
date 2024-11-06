@@ -33,9 +33,16 @@ const Product = ({ product }) => {
       .then((response) => {
         if (response.ok) {
           console.log("Product successfully deleted");
-
+          
           // Deleted product from the list of products
           setData((prev) => prev.filter((item) => item.code !== product.code));
+        }else {
+          response.json().then((errorData) => {
+            alert(errorData.message);
+            throw new Error(
+              `Error del servidor: ${response.status} ${response.statusText} - ${errorData.message}`
+            );
+          });
         }
       })
       .catch((error) => console.error("Error in the request:", error));
@@ -60,8 +67,13 @@ const Product = ({ product }) => {
                 product.code == updatedProduct.current.code ? updatedProduct.current : product
             )
           );
-        } else {
-          console.error("Error updating the product");
+        }else {
+          response.json().then((errorData) => {
+            alert(errorData.message);
+            throw new Error(
+              `Error del servidor: ${response.status} ${response.statusText} - ${errorData.message}`
+            );
+          });
         }
       })
       .catch((error) => console.error("Error in the request:", error));

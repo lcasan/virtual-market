@@ -15,31 +15,31 @@ const productModel = {
 };
 
 const ProductForm = ({ setShowCreateForm }) => {
-    const [isDigital, setIsDigital] = useState(true);
-    const { _, setData } = useContext(DataContext);
-    const [newProduct, setNewProduct] = useState(productModel);
+  const [isDigital, setIsDigital] = useState(true);
+  const { _, setData } = useContext(DataContext);
+  const [newProduct, setNewProduct] = useState(productModel);
 
-    const handleSelect = (evt) => { 
-        const {value} = evt.target;
-        newProduct.type = value;
-        (value === 'digital') ? setIsDigital(true) : setIsDigital(false); 
-    };
+  const handleSelect = (evt) => {
+    const { value } = evt.target;
+    newProduct.type = value;
+    value === "digital" ? setIsDigital(true) : setIsDigital(false);
+  };
 
-    const handleFormChange = (evt) => {
-        const { id, value } = evt.target;
-        setNewProduct({
-            ...newProduct,
-            [id]: value,
-        });
-        console.log(JSON.stringify(newProduct));
-    };
+  const handleFormChange = (evt) => {
+    const { id, value } = evt.target;
+    setNewProduct({
+      ...newProduct,
+      [id]: value,
+    });
+    console.log(JSON.stringify(newProduct));
+  };
 
   // Handle the creation of the new product
   const handleCreateProduct = (evt) => {
     // Delete attribute
     const product = newProduct;
-    (isDigital) ? delete product.shippingCost : delete product.downloadLink;
-    
+    isDigital ? delete product.shippingCost : delete product.downloadLink;
+
     // Convert to JSON
     const jsonBody = JSON.stringify(product);
 
@@ -49,11 +49,19 @@ const ProductForm = ({ setShowCreateForm }) => {
       headers: { "Content-Type": "application/json" },
       body: jsonBody,
     })
-      .then((response) => response.json())
+    .then((response) => {
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            alert(errorData.message);
+            throw new Error(
+              `Error del servidor: ${response.status} ${response.statusText} - ${errorData.message}`
+            );
+          });
+        }
+      })
       .then((json) => {
-        setData(perv => [...perv, json.data]);
-    })
-      .catch((error) => console.error("Error in the request:", error));
+        setData((perv) => [...perv, json.data]);
+      });
 
     setNewProduct(productModel);
     setShowCreateForm(false);
@@ -64,33 +72,35 @@ const ProductForm = ({ setShowCreateForm }) => {
       <tr>
         <td></td>
         {Object.keys(newProduct).map((key) => {
-            if(key == "code") {
-                return <td key={`${newProduct.code}-${key}`}>{newProduct.code}</td>
-            }else if(key == "type") {
-                return (
-                    <td key={`${newProduct.code}-${key}`}>
-                        <select name="type" id="type" onChange={handleSelect}>
-                            <option value="digital">digital</option>
-                            <option value="físico">físico</option>
-                        </select>
-                    </td>
-                )
-            }else {
-                const active = isDigital && key != "shippingCost" || !isDigital && key != "downloadLink";
-                
-                return (
-                    <ProductField
-                        key={`${newProduct.code}-${key}`}
-                        active={active}
-                        id={key}
-                        content={newProduct[key]}
-                        onChange={handleFormChange}
-                    />
-                )
-            }
+          if (key == "code") {
+            return <td key={`${newProduct.code}-${key}`}>{newProduct.code}</td>;
+          } else if (key == "type") {
+            return (
+              <td key={`${newProduct.code}-${key}`}>
+                <select name="type" id="type" onChange={handleSelect}>
+                  <option value="digital">digital</option>
+                  <option value="físico">físico</option>
+                </select>
+              </td>
+            );
+          } else {
+            const active =
+              (isDigital && key != "shippingCost") ||
+              (!isDigital && key != "downloadLink");
+
+            return (
+              <ProductField
+                key={`${newProduct.code}-${key}`}
+                active={active}
+                id={key}
+                content={newProduct[key]}
+                onChange={handleFormChange}
+              />
+            );
+          }
         })}
         <td colSpan={3} onClick={handleCreateProduct}>
-          <FaSave/>
+          <FaSave />
         </td>
         <td></td>
       </tr>
