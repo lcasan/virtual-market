@@ -7,7 +7,7 @@ import { EditingContext } from "../context/EditingContex";
 import { DataContext } from "../context/DataContext";
 
 const Product = ({ product }) => {
-  const { _ , setData } = useContext(DataContext);
+  const { _, setData } = useContext(DataContext);
   const [editing, setEditing] = useState(false);
   const updatedProduct = useRef({ ...product });
 
@@ -33,10 +33,10 @@ const Product = ({ product }) => {
       .then((response) => {
         if (response.ok) {
           console.log("Product successfully deleted");
-          
+
           // Deleted product from the list of products
           setData((prev) => prev.filter((item) => item.code !== product.code));
-        }else {
+        } else {
           response.json().then((errorData) => {
             alert(errorData.message);
             throw new Error(
@@ -61,20 +61,27 @@ const Product = ({ product }) => {
     })
       .then((response) => {
         if (response.ok) {
-          console.log("Product successfully updated");
-          setData((prev) => 
-            prev.map((product) => 
-                product.code == updatedProduct.current.code ? updatedProduct.current : product
-            )
-          );
-        }else {
-          response.json().then((errorData) => {
+          return response.json();
+        } else {
+          return response.json().then((errorData) => {
             alert(errorData.message);
             throw new Error(
               `Error del servidor: ${response.status} ${response.statusText} - ${errorData.message}`
             );
           });
         }
+      })
+      .then((json) => {
+        console.log("Product successfully updated");
+
+        // Actualiza el estado con el producto modificado
+        setData((prev) =>
+          prev.map((product) =>
+            product.code === updatedProduct.current.code
+              ? updatedProduct.current
+              : product
+          )
+        );
       })
       .catch((error) => console.error("Error in the request:", error));
 
@@ -86,27 +93,28 @@ const Product = ({ product }) => {
       <tr key={product.code} scope="row">
         {/* Product fields */}
         <td>{product.code}</td>
-        {
-          Object.keys(product).map((key) => {
+        {Object.keys(product).map((key) => {
           let content = product[key];
           let active = true;
           const isDigital = product.type == "digital";
 
           if (key == "shippingCost") {
             content = product.shippingCost ? product.shippingCost : "N/A";
-            if(isDigital) {
+            if (isDigital) {
               active = false;
             }
           }
-          
+
           if (key == "downloadLink") {
             content = product.downloadLink ? (
               <a href={product.downloadLink} className="more">
                 {product.downloadLink}
               </a>
-            ) : "N/A";
-            
-            if(!isDigital) {
+            ) : (
+              "N/A"
+            );
+
+            if (!isDigital) {
               active = false;
             }
           }
@@ -122,8 +130,7 @@ const Product = ({ product }) => {
               />
             )
           );
-          })
-        }
+        })}
 
         {/* Edit, save and delete operations */}
         <td onClick={handleUpdate}>

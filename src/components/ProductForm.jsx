@@ -49,7 +49,7 @@ const ProductForm = ({ setShowCreateForm }) => {
       headers: { "Content-Type": "application/json" },
       body: jsonBody,
     })
-    .then((response) => {
+      .then((response) => {
         if (!response.ok) {
           return response.json().then((errorData) => {
             alert(errorData.message);
@@ -58,9 +58,14 @@ const ProductForm = ({ setShowCreateForm }) => {
             );
           });
         }
+    
+        return response.json();
       })
       .then((json) => {
-        setData((perv) => [...perv, json.data]);
+        setData((prev) => [...prev, json.data]);
+      })
+      .catch((error) => {
+        console.error("Error in the request:", error);
       });
 
     setNewProduct(productModel);
