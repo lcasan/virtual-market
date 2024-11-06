@@ -89,19 +89,32 @@ const Product = ({ product }) => {
         {
           Object.keys(product).map((key) => {
           let content = product[key];
-          if (key == "shippingCost") {content = product.shippingCost ? product.shippingCost : "N/A";}
+          let active = true;
+          const isDigital = product.type == "digital";
 
+          if (key == "shippingCost") {
+            content = product.shippingCost ? product.shippingCost : "N/A";
+            if(isDigital) {
+              active = false;
+            }
+          }
+          
           if (key == "downloadLink") {
             content = product.downloadLink ? (
               <a href={product.downloadLink} className="more">
                 {product.downloadLink}
               </a>
             ) : "N/A";
+            
+            if(!isDigital) {
+              active = false;
+            }
           }
 
           return (
             key != "code" && (
               <ProductField
+                active={active}
                 key={`${product.code}-${key}`}
                 id={key}
                 content={content}
