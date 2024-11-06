@@ -3,8 +3,8 @@ import { FaSave } from "react-icons/fa";
 import { EditingContext } from "../context/EditingContex";
 import ProductField from "./ProductField";
 import { DataContext } from "../context/DataContext";
+const API_URL = import.meta.env.VITE_API_URL;
 
-import "./ProductForm.css";
 
 const productModel = {
   name: "",
@@ -44,7 +44,7 @@ const ProductForm = ({ setShowCreateForm }) => {
     const jsonBody = JSON.stringify(product);
 
     // Send a POST request to the "/new" endpoint of the server at localhost:8080
-    fetch("http://localhost:8080/new", {
+    fetch(`${API_URL}/new`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: jsonBody,

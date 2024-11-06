@@ -5,6 +5,7 @@ import { FaSave } from "react-icons/fa";
 import React, { useState, useRef, useContext, useCallback } from "react";
 import { EditingContext } from "../context/EditingContex";
 import { DataContext } from "../context/DataContext";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Product = ({ product }) => {
   const { _, setData } = useContext(DataContext);
@@ -27,7 +28,7 @@ const Product = ({ product }) => {
   // Delete product
   const handleDelete = useCallback(() => {
     // Delete product in database
-    fetch(`http://localhost:8080/delete?code=${product.code}`, {
+    fetch(`${API_URL}/delete?code=${product.code}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -54,7 +55,7 @@ const Product = ({ product }) => {
     const jsonBody = JSON.stringify(updatedProduct.current);
 
     // Update the database product
-    fetch(`http://localhost:8080/update/${product.code}`, {
+    fetch(`${API_URL}/update/${product.code}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: jsonBody,
