@@ -7,28 +7,32 @@ import { EditingContext } from "../context/EditingContex";
 import { DataContext } from "../context/DataContext";
 const API_URL = import.meta.env.VITE_API_URL;
 
-const Product = ({ product }) => {
-  const { _, setData } = useContext(DataContext);
+const Product = ({ data }) => {
+  const [currentData, setCurrentData] = useState(data);
   const [editing, setEditing] = useState(false);
-  const updatedProduct = useRef({ ...product });
+  const [type, setType] = useState(data.type);
 
+  // Context's variables 
+  const {_, setData} = useContext(DataContext);
+
+  // Handle change
   const handleChange = (evt) => {
-    const { id, value } = evt.target;
-    updatedProduct.current = {
-      ...updatedProduct.current,
-      [id]: value,
-    };
-  };
+    const { name, value } = evt.target;
+    
+    // Set type
+    (name == "type") && setType(value);
 
-  // Update product
-  const handleUpdate = () => {
-    setEditing(true);
+    // Update field
+    setCurrentData(prev => ({
+      ...prev,
+      [name]: value,
+    }))
   };
 
   // Delete product
   const handleDelete = useCallback(() => {
     // Delete product in database
-    fetch(`${API_URL}/delete?code=${product.code}`, {
+    fetch(`${API_URL}/delete?code=${data.code}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -36,7 +40,7 @@ const Product = ({ product }) => {
           console.log("Product successfully deleted");
 
           // Deleted product from the list of products
-          setData((prev) => prev.filter((item) => item.code !== product.code));
+          setData((prev) => prev.filter((item) => item.code !== data.code));
         } else {
           response.json().then((errorData) => {
             alert(errorData.message);
@@ -47,23 +51,26 @@ const Product = ({ product }) => {
         }
       })
       .catch((error) => console.error("Error in the request:", error));
-  }, [product.code]);
-
+  }, [data.code]);
+  
   // Save product
   const handleSave = useCallback(() => {
+    // Delete attributes
+    type == "digital"
+      ? currentData.shippingCost = null
+      : currentData.downloadLink = null;
+
     // Convert to JSON
-    const jsonBody = JSON.stringify(updatedProduct.current);
+    const jsonBody = JSON.stringify(currentData);
 
     // Update the database product
-    fetch(`${API_URL}/update/${product.code}`, {
+    fetch(`${API_URL}/update/${data.code}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: jsonBody,
     })
       .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
+        if (!response.ok) {
           return response.json().then((errorData) => {
             alert(errorData.message);
             throw new Error(
@@ -71,72 +78,45 @@ const Product = ({ product }) => {
             );
           });
         }
+
+        return response.json();
       })
       .then((json) => {
         console.log("Product successfully updated");
-
-        // Actualiza el estado con el producto modificado
-        setData((prev) =>
-          prev.map((product) =>
-            product.code === updatedProduct.current.code
-              ? updatedProduct.current
-              : product
-          )
-        );
+        // setData((prev) => 
+        //   prev.filter((item) => (item.code == product.code ? json.data : item))
+        // );
       })
-      .catch((error) => console.error("Error in the request:", error));
+      .catch((error) => {
+        console.error("Error in the request:", error);
+      });
 
     setEditing(false);
-  }, [product.code, updatedProduct.current]);
+  }, [currentData]);
 
   return (
-    <EditingContext.Provider value={editing}>
-      <tr key={product.code} scope="row">
+    <EditingContext.Provider value={[editing, type]}>
+      <tr key={currentData.code} scope="row">
         {/* Product fields */}
-        <td>{product.code}</td>
-        {Object.keys(product).map((key) => {
-          let content = product[key];
-          let active = true;
-          const isDigital = product.type == "digital";
+        {Object.keys(currentData).map((key) => (
+            <ProductField
+              key={`${currentData.code}-${key}`}
+              name={key}
+              value={currentData[key]}
+              onChange={handleChange}
+            />
+        ))}
 
-          if (key == "shippingCost") {
-            content = product.shippingCost ? product.shippingCost : "N/A";
-            if (isDigital) {
-              active = false;
-            }
-          }
-
-          if (key == "downloadLink") {
-            content = product.downloadLink ? (
-              <a href={product.downloadLink} className="more">
-                {product.downloadLink}
-              </a>
-            ) : (
-              "N/A"
-            );
-
-            if (!isDigital) {
-              active = false;
-            }
-          }
-
-          return (
-            key != "code" && (
-              <ProductField
-                active={active}
-                key={`${product.code}-${key}`}
-                id={key}
-                content={content}
-                onChange={handleChange}
-              />
-            )
-          );
-        })}
-
-        {/* Edit, save and delete operations */}
-        <td onClick={handleUpdate}>
+        {/* Option: Edit field data */}
+        <td
+          onClick={() => {
+            setEditing(true);
+          }}
+        >
           <FaEdit />
         </td>
+
+        {/* Option: Save field data */}
         {editing ? (
           <td onClick={handleSave}>
             <FaSave />
@@ -146,6 +126,8 @@ const Product = ({ product }) => {
             <FaSave style={{ opacity: 0.05 }} />
           </td>
         )}
+
+        {/* Option: Delete field data */}
         <td onClick={handleDelete}>
           <FaTrash />
         </td>

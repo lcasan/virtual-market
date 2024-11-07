@@ -5,45 +5,43 @@ import ProductField from "./ProductField";
 import { DataContext } from "../context/DataContext";
 const API_URL = import.meta.env.VITE_API_URL;
 
-
-const productModel = {
-  name: "",
-  price: 0,
-  type: "digital",
-  shippingCost: 0,
-  downloadLink: "",
-};
-
-const ProductForm = ({ setShowCreateForm }) => {
-  const [isDigital, setIsDigital] = useState(true);
+const ProductForm = ({ showForm }) => {
+  const [type, setType] = useState("digital");
   const { _, setData } = useContext(DataContext);
-  const [newProduct, setNewProduct] = useState(productModel);
+  const [currentData, setCurrentData] = useState({
+    code: "",
+    name: "",
+    price: "",
+    type: "",
+    shippingCost: "",
+    downloadLink: ""
+  });
 
-  const handleSelect = (evt) => {
-    const { value } = evt.target;
-    newProduct.type = value;
-    value === "digital" ? setIsDigital(true) : setIsDigital(false);
-  };
+  // Handle change
+  const handleChange = (evt) => {
+    const { name, value } = evt.target;
+    
+    // Set type
+    (name == "type") && setType(value);
 
-  const handleFormChange = (evt) => {
-    const { id, value } = evt.target;
-    setNewProduct({
-      ...newProduct,
-      [id]: value,
-    });
-    console.log(JSON.stringify(newProduct));
+    // Update field
+    setCurrentData(prev => ({
+      ...prev,
+      [name]: value,
+    }))
   };
 
   // Handle the creation of the new product
   const handleCreateProduct = (evt) => {
-    // Delete attribute
-    const product = newProduct;
-    isDigital ? delete product.shippingCost : delete product.downloadLink;
+    // Delete attributes
+    type == "digital"
+      ? delete currentData.shippingCost
+      : delete currentData.downloadLink;
 
     // Convert to JSON
-    const jsonBody = JSON.stringify(product);
+    const jsonBody = JSON.stringify(currentData);
 
-    // Send a POST request to the "/new" endpoint of the server at localhost:8080
+    // Send a POST request to the "/new" endpoint of the server
     fetch(`${API_URL}/new`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -68,42 +66,22 @@ const ProductForm = ({ setShowCreateForm }) => {
         console.error("Error in the request:", error);
       });
 
-    setNewProduct(productModel);
-    setShowCreateForm(false);
+    showForm(false);
   };
 
   return (
-    <EditingContext.Provider value={true}>
+    <EditingContext.Provider value={[true, type]}>
       <tr>
-        <td></td>
-        {Object.keys(newProduct).map((key) => {
-          if (key == "code") {
-            return <td key={`${newProduct.code}-${key}`}>{newProduct.code}</td>;
-          } else if (key == "type") {
-            return (
-              <td key={`${newProduct.code}-${key}`}>
-                <select name="type" id="type" onChange={handleSelect}>
-                  <option value="digital">digital</option>
-                  <option value="físico">físico</option>
-                </select>
-              </td>
-            );
-          } else {
-            const active =
-              (isDigital && key != "shippingCost") ||
-              (!isDigital && key != "downloadLink");
+        {/* Product fields */}
+        {Object.keys(currentData).map((key) => (
+            <ProductField
+              name={key}
+              value={currentData[key]}
+              onChange={handleChange}
+            />
+        ))}
 
-            return (
-              <ProductField
-                key={`${newProduct.code}-${key}`}
-                active={active}
-                id={key}
-                content={newProduct[key]}
-                onChange={handleFormChange}
-              />
-            );
-          }
-        })}
+        {/* Option: Save field data */}
         <td colSpan={3} onClick={handleCreateProduct}>
           <FaSave />
         </td>

@@ -4,7 +4,7 @@ import React from "react";
 const ProductList = ({products}) => {
     return (
         products.map((product) => (
-            <Product key={product.code} product={product} />
+            <Product key={product.code} data={product} />
           ))
     )
 };

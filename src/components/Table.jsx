@@ -46,7 +46,7 @@ const Table = () => {
         </thead>
         <tbody>
           {/* Form for create product */}
-          {showCreateForm && <ProductForm setShowCreateForm={setShowCreateForm}/> }
+          {showCreateForm && <ProductForm showForm={setShowCreateForm}/> }
 
           {/* List products search results */}
           {searchResult.length > 0 ? <ProductList products={searchResult}/> : <NotProduct/>}
